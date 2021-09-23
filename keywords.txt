@@ -1,0 +1,12 @@
+# Syntax Coloring Map For espBoilerplate
+
+# Datatypes (KEYWORD1)
+#Test    KEYWORD1
+
+# Methods and Functions (KEYWORD2)
+begin KEYWORD2
+
+# Instances (KEYWORD2)
+
+# Constants (LITERAL1)
+espBoilerplate	LITERAL1
