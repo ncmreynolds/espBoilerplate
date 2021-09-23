@@ -6,6 +6,7 @@
 # Methods and Functions (KEYWORD2)
 begin KEYWORD2
 setOutputStream KEYWORD2
+setRetries KEYWORD2
 
 # Instances (KEYWORD2)
 

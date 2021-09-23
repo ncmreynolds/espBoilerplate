@@ -34,6 +34,7 @@ class espBoilerplateClass
 		~espBoilerplateClass();						//Destructor method
 		bool begin(char* SSID, char* PSK);			//Default way to start Wi-Fi connection
 		bool setOutputStream(Stream &);				//Change the Stream used for output
+		void setRetries(uint8_t);					//Change how many retries before a connections attemp fails
 	protected:
 	private:
 		Stream *_outputStream = nullptr;			//The stream used for the terminal

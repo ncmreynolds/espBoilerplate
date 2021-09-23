@@ -4,14 +4,24 @@
   #define WIFI_SSID "test"
   #define WIFI_PSK "testpresharedkey"
 #endif
+
+bool connectedOk = false;
+
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(115200);
-  //espBoilerplate.setOutputStream(Serial1); //Optionally you can specifiy the Stream to send output to, eg. Serial1
-  espBoilerplate.begin(WIFI_SSID,WIFI_PSK);
+  Serial.begin(115200);                                   //Set up the Serial device
+  //espBoilerplate.setOutputStream(Serial1);              //Optionally you can specifiy the Stream to send output to, eg. if using Serial1
+  espBoilerplate.setRetries(60);                          //Optionally, increase retries on the connection to 60s. Default is 30s.
+  connectedOk = espBoilerplate.begin(WIFI_SSID,WIFI_PSK); //Connect to the Wi-Fi SSID WIFI_SSID with pre-shared key WIFI_PSK, return is true if succesful
+  if(connectedOk == false)
+  {
+    Serial.println("Restarting");
+    ESP.restart();
+  }
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  Serial.print("RSSI:");
+  Serial.println(WiFi.RSSI());
+  delay(1000);
 }

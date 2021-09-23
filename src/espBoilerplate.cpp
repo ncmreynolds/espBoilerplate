@@ -23,25 +23,40 @@ bool espBoilerplateClass::setOutputStream(Stream &streamToUse)
 		return(false);
 	}
 }
+void espBoilerplateClass::setRetries(uint8_t retries)
+{
+	connectionRetries = retries;
+}
 bool espBoilerplateClass::begin(char* SSID, char* PSK)
 {
 	if(_outputStream == nullptr)	//Check there's an output Stream set
 	{
 		_outputStream = &Serial;		//Assume Serial for output
 	}
-	WiFi.persistent(false);
-	_outputStream->print(F("\n\nESP MAC address:"));
+	WiFi.persistent(false);										//Avoid flash wear
+	WiFi.setAutoReconnect(true);								//Because why not?
+	_outputStream->print(F("\n\nRestart reason:"));
+	_outputStream->println(ESP.getResetReason());
+	#ifdef ESP8266
+	_outputStream->print(F("ESP8266 MAC address:"));
+	#elif ESP32
+	_outputStream->print(F("ESP32 MAC address:"));
+	#endif
 	_outputStream->println(WiFi.macAddress());
 	WiFi.begin(SSID, PSK);
-	_outputStream->print(F("Trying to connect to \""));
+	_outputStream->print(F("Trying to connect to SSID:\""));
 	_outputStream->print(SSID);
-	_outputStream->print('"');
+	_outputStream->print(F("\" PSK:\""));
+	_outputStream->print(WiFi.psk());
+	_outputStream->print("\"\nTimeout:");
+	_outputStream->print((connectionRetries*connectionRetryFrequency)/1000);
+	_outputStream->print('s');
 	uint8_t retries = connectionRetries;
-	while(WiFi.status() != WL_CONNECTED && retries > 0)
+	while((WiFi.status() == WL_DISCONNECTED || WiFi.status() == WL_IDLE_STATUS) && retries > 0)
 	{
+		retries--;
 		_outputStream->print('.');
 		delay(connectionRetryFrequency);
-		retries--;
 	}
 	_outputStream->println();
 	if(WiFi.status() == WL_CONNECTED)
@@ -66,7 +81,9 @@ void espBoilerplateClass::printIpStatus()
 	_outputStream->print(F("Gateway:"));
 	_outputStream->print(WiFi.gatewayIP());
 	_outputStream->print(F(" DNS:"));
-	_outputStream->println(WiFi.dnsIP());
+	_outputStream->print(WiFi.dnsIP());
+	_outputStream->print('/');
+	_outputStream->println(WiFi.dnsIP(1));
 	_outputStream->print(F("Hostname:"));
 	_outputStream->println(WiFi.hostname());
 }

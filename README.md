@@ -57,6 +57,23 @@ void setup()
 espBoilerplate.begin(WIFI_SSID,WIFI_PSK);
 ```
 
-...and avoid all the dull boilerplate.
+...and avoid all the dull boilerplate. It also fails a bit more helpfully/sooner than just checking for WiFi.status() == WL_CONNECTED if the SSID does not exist etc.
 
 It's probably most useful when starting out creating a sketch and can be ditched once you don't want to see all the output and/or want to reduce the size of the sketch.
+
+## Usage
+
+There are only a handful of methods to this library, it's supposed to be simple.
+
+```
+bool espBoilerplate.begin(WIFI_SSID,WIFI_PSK);	//Does what it says on the tin, connects to this SSID with this PSK
+```
+
+```
+bool espBoilerplate.setOutputStream(Serial1);	//Optionally, send the output to another stream, but it defaults to "Serial"
+```
+
+```
+void setRetries(60);							//Set how many 1s retries before giving up on making a connection
+```
+
