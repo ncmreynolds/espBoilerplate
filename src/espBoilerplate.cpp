@@ -29,9 +29,9 @@ void espBoilerplateClass::setRetries(uint8_t retries)
 }
 bool espBoilerplateClass::begin(char* SSID, char* PSK)
 {
-	if(_outputStream == nullptr)	//Check there's an output Stream set
+	if(_outputStream == nullptr)								//Check there's an output Stream set
 	{
-		_outputStream = &Serial;		//Assume Serial for output
+		_outputStream = &Serial;								//Assume Serial for output
 	}
 	WiFi.persistent(false);										//Avoid flash wear
 	WiFi.setAutoReconnect(true);								//Because why not?
@@ -61,7 +61,6 @@ bool espBoilerplateClass::begin(char* SSID, char* PSK)
 	_outputStream->println();
 	if(WiFi.status() == WL_CONNECTED)
 	{
-		//WiFi.onStationModeDisconnected(&espBoilerplateOnStationDisconnected);
 		printConnectionStatus();
 		printIpStatus();
 		return(true);

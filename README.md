@@ -9,8 +9,6 @@ This is for when you are sick of writing very repetitive Wi-Fi connection manage
 
 Including the library pulls in the right versions of other libraries for the different ESP variants and just gets on with it for you.
 
-Because I often want real time clock available in my projects it also pulls in libraries for connecting to an NTP server, but this can be prevented if you like.
-
 All of this is just a very verbose implementation of code no smarter than the usual example Wi-Fi code and various Wi-Fi diagnostic methods but that's kind of the point. You can just replace yawnsome stuff like...
 
 ```

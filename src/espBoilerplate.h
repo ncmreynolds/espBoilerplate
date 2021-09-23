@@ -4,28 +4,7 @@
 	#include <WiFi.h>
 #else
 	#include <ESP8266WiFi.h>
-	#include <ESP8266mDNS.h>
 #endif
-#include <WiFiUdp.h>
-#include <ArduinoOTA.h>
-
-/*WiFiEventHandler gotIpEventHandler, disconnectedEventHandler;
-
-gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event)
-{
-	Serial.print("Station connected, IP: ");
-	Serial.println(WiFi.localIP());
-});
-
-disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
-{
-	Serial.println("Station disconnected");
-});*/
-
-
-/*void espBoilerplateOnStationDisconnected(const WiFiEventStationModeDisconnected& event) {
-  Serial.println("Station disconnected");
-}*/
 
 class espBoilerplateClass
 {
