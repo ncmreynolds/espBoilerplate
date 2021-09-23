@@ -7,6 +7,7 @@
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  //espBoilerplate.setOutputStream(Serial1); //Optionally you can specifiy the Stream to send output to, eg. Serial1
   espBoilerplate.begin(WIFI_SSID,WIFI_PSK);
 }
 
