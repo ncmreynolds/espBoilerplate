@@ -27,8 +27,29 @@ class espBoilerplateClass
 		espBoilerplateClass();						//Constructor method
 		~espBoilerplateClass();						//Destructor method
 		//bool begin(const char* SSID,const char* PSK);			//Default way to start Wi-Fi connection
+		template <class argumentA, class argumentB, class argumentC, class argumentD>
+		bool begin(argumentA SSID, argumentB PSK,argumentC APSSID, argumentD APPSK)	//Default way to start Wi-Fi connection
+		{
+			bool connectResult = begin(SSID, PSK, false);
+			if(connectResult)
+			{
+				WiFi.mode(WIFI_MODE_APSTA);
+			}
+			else
+			{
+				WiFi.mode(WIFI_MODE_AP);
+			}
+			_outputStream->print(F("Creating SoftAP SSID:\""));
+			_outputStream->print(APSSID);
+			_outputStream->print(F("\" PSK:\""));
+			_outputStream->print(APPSK);
+			_outputStream->println('"');
+			WiFi.softAP(APSSID, APPSK);
+			printIpStatus();
+			return(connectResult);
+		}
 		template <class argumentA, class argumentB>
-		bool begin(argumentA SSID, argumentB PSK)						//Default way to start Wi-Fi connection
+		bool begin(argumentA SSID, argumentB PSK, bool displayIpStatus = true)	//Default way to start Wi-Fi connection
 		{
 			if(_outputStream == nullptr)								//Check there's an output Stream set
 			{
@@ -37,7 +58,7 @@ class espBoilerplateClass
 			WiFi.persistent(false);										//Avoid flash wear
 			WiFi.setAutoReconnect(true);								//Because why not?
 			#ifdef ESP_IDF_VERSION_MAJOR
-				_outputStream->print(F("\n\nIDF version:"));			
+				_outputStream->print(F("IDF version:"));			
 				#ifdef ESP_IDF_VERSION_MINOR
 					_outputStream->print(ESP_IDF_VERSION_MAJOR);
 					_outputStream->print('.');
@@ -45,8 +66,8 @@ class espBoilerplateClass
 				#else
 					_outputStream->println(ESP_IDF_VERSION_MAJOR);
 				#endif
-			#else
-				_outputStream->print(F("\n\n\n"));
+			/*#else
+				_outputStream->print(F("\n\n\n"));*/
 			#endif
 			_outputStream->print(F("Core:"));
 			#if defined(ESP32)
@@ -124,7 +145,10 @@ class espBoilerplateClass
 			if(WiFi.status() == WL_CONNECTED)
 			{
 				printConnectionStatus();
-				printIpStatus();
+				if(displayIpStatus)
+				{
+					printIpStatus();
+				}
 				return(true);
 			}
 			else
