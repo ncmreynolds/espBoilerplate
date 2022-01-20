@@ -65,15 +65,19 @@ It's probably most useful when starting out creating a sketch and can be ditched
 
 There are only a handful of methods to this library, it's supposed to be simple.
 
-```
+```c++
 bool espBoilerplate.begin(WIFI_SSID,WIFI_PSK);	//Does what it says on the tin, connects to this SSID with this PSK
 ```
 
+```c++
+bool espBoilerplate.begin(WIFI_SSID,WIFI_PSK,AP_SSID,AP_PSK);//Similar to the above but starts a SoftAp as well
 ```
+
+```c++
 bool espBoilerplate.setOutputStream(Serial1);	//Optionally, send the output to another stream, but it defaults to "Serial"
 ```
 
-```
+```c++
 void setRetries(60);							//Set how many 1s retries before giving up on making a connection
 ```
 
