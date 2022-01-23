@@ -27,6 +27,58 @@ void espBoilerplateClass::setRetries(uint8_t retries)
 {
 	connectionRetries = retries;
 }
+
+void espBoilerplateClass::setHostname(String name)
+{
+	uint32_t length = name.length();
+	if(name.length() > 0)
+	{
+		if(_outputStream != nullptr)
+		{
+			_outputStream->print(F("Setting hostname:"));
+		}
+		if(length > 64)
+		{
+			length = 64;
+			hostname = new char[length + 1];
+			String tempString = name.substring(0, length - 1);
+			tempString.toCharArray(hostname, length + 1);
+		}
+		else
+		{
+			hostname = new char[length + 1];
+			name.toCharArray(hostname, length + 1);
+		}
+		if(_outputStream != nullptr)
+		{
+			_outputStream->println(hostname);
+		}
+	}
+}
+
+void espBoilerplateClass::setHostname(char *name)
+{
+	if(name != nullptr)
+	{
+		if(_outputStream != nullptr)
+		{
+			_outputStream->print(F("Setting hostname:"));
+		}
+		uint32_t length = strlen(name);
+		if(length > 64)
+		{
+			length = 64;
+		}
+		hostname = new char[length + 1];
+		strncpy(hostname, name, length);
+		hostname[length  + 1] = char(0);
+		if(_outputStream != nullptr)
+		{
+			_outputStream->println(hostname);
+		}
+	}
+}
+
 void espBoilerplateClass::printIpStatus()
 {
 	if((WiFi.getMode() == WIFI_MODE_STA || WiFi.getMode() == WIFI_MODE_APSTA) && WiFi.status() == WL_CONNECTED)
@@ -147,7 +199,7 @@ void espBoilerplateClass::printConnectionStatus()
 }
 
 #ifdef ESP32
-void espBoilerplateClass::es32getResetReason(uint8_t core)
+void espBoilerplateClass::es32printResetReason(uint8_t core)
 {
 	switch (rtc_get_reset_reason(core))
 	{

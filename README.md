@@ -54,6 +54,8 @@ void setup()
 ...
 ...
 ...
+Serial.begin(115200);
+espBoilerplate.setOutputStream(Serial);
 espBoilerplate.begin(WIFI_SSID,WIFI_PSK);
 ```
 
@@ -61,9 +63,20 @@ espBoilerplate.begin(WIFI_SSID,WIFI_PSK);
 
 It's probably most useful when starting out creating a sketch and can be ditched once you don't want to see all the output and/or want to reduce the size of the sketch.
 
+If you omit "setOutputStream" there will be no output on a Stream.
+
 ## Usage
 
 There are only a handful of methods to this library, it's supposed to be simple.
+
+```c++
+bool setOutputStream(Stream &);				//Set the Stream used for debug output, if any
+```
+
+```c++
+void setHostname(char *);					//Set the hostname, chooses the right functions for ESP8266/ESP32
+void setHostname(String name);				//String version of above
+```
 
 ```c++
 bool espBoilerplate.begin(WIFI_SSID,WIFI_PSK);	//Does what it says on the tin, connects to this SSID with this PSK
