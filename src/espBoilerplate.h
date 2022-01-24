@@ -153,13 +153,38 @@ class espBoilerplateClass
 				_outputStream->print('s');
 			}
 			uint8_t retries = connectionRetries;
+			#if defined(ESP8266)
 			while((WiFi.status() == WL_DISCONNECTED || WiFi.status() == WL_IDLE_STATUS) && retries > 0)
+			#elif defined(ESP32)
+			while((WiFi.status() == WL_DISCONNECTED || WiFi.status() == WL_IDLE_STATUS || WiFi.status() == WL_CONNECT_FAILED) && retries > 0)
+			#endif
 			{
 				retries--;
 				if(_outputStream != nullptr)
 				{
-					_outputStream->print('.');
-					//_outputStream->print(WiFi.status());
+					switch (WiFi.status()) {
+						case WL_IDLE_STATUS:
+							_outputStream->print('I');
+						break;
+						case WL_NO_SSID_AVAIL:
+							_outputStream->print('U');
+						break;
+						case WL_SCAN_COMPLETED:
+							_outputStream->print('S');
+						break;
+						case WL_CONNECT_FAILED:
+							_outputStream->print('F');
+						break;
+						case WL_CONNECTION_LOST:
+							_outputStream->print('L');
+						break;
+						case WL_DISCONNECTED:
+							_outputStream->print('D');
+						break;
+						default:
+							_outputStream->print('?');
+						break;
+					}
 				}
 				delay(connectionRetryFrequency);
 			}

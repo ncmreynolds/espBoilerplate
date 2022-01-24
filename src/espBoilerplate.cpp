@@ -116,84 +116,84 @@ void espBoilerplateClass::printConnectionStatus()
 {
 	switch (WiFi.status()) {
 		case WL_IDLE_STATUS:
-		_outputStream->println(F("Idle"));
+			_outputStream->println(F("Idle"));
 		break;
 		case WL_NO_SSID_AVAIL:
-		_outputStream->println(F("SSID unavailable"));
+			_outputStream->println(F("SSID unavailable"));
 		break;
 		case WL_CONNECTED:
-		_outputStream->print(F("Connected to SSID:\""));
-		_outputStream->print(WiFi.SSID());
-		_outputStream->print("\" BSSID:\"");
-		_outputStream->print(WiFi.BSSIDstr());
-		_outputStream->println('"');
-		_outputStream->print(F("RSSI:"));
-		_outputStream->print(WiFi.RSSI());
-		_outputStream->print(F(" Channel:"));
-		_outputStream->print(WiFi.channel());
-		_outputStream->print(F(" Phy:"));
-		#if defined (ESP8266)
-		switch (WiFi.getPhyMode()){
-			case WIFI_PHY_MODE_11B:
-			_outputStream->println(F("802.11b"));
-			break;
-			case WIFI_PHY_MODE_11G:
-			_outputStream->println(F("802.11g"));
-			break;
-			case WIFI_PHY_MODE_11N:
-			_outputStream->println(F("802.11n"));
-			break;
-			default:
-			_outputStream->println(F("Unknown"));
-			break;
-		}
-		#elif defined (ESP32)
-		wifi_ap_record_t *ap_info;
-		if(esp_wifi_sta_get_ap_info(ap_info) == ESP_OK)
-		{
-			if(ap_info->phy_11b)
-			{
+			_outputStream->print(F("Connected to SSID:\""));
+			_outputStream->print(WiFi.SSID());
+			_outputStream->print("\" BSSID:\"");
+			_outputStream->print(WiFi.BSSIDstr());
+			_outputStream->println('"');
+			_outputStream->print(F("RSSI:"));
+			_outputStream->print(WiFi.RSSI());
+			_outputStream->print(F(" Channel:"));
+			_outputStream->print(WiFi.channel());
+			_outputStream->print(F(" Phy:"));
+			#if defined (ESP8266)
+			switch (WiFi.getPhyMode()){
+				case WIFI_PHY_MODE_11B:
 				_outputStream->println(F("802.11b"));
+				break;
+				case WIFI_PHY_MODE_11G:
+				_outputStream->println(F("802.11g"));
+				break;
+				case WIFI_PHY_MODE_11N:
+				_outputStream->println(F("802.11n"));
+				break;
+				default:
+				_outputStream->println(F("Unknown"));
+				break;
 			}
-			if(ap_info->phy_11g)
+			#elif defined (ESP32)
+			wifi_ap_record_t *ap_info;
+			if(esp_wifi_sta_get_ap_info(ap_info) == ESP_OK)
 			{
-				_outputStream->println(F("802.11b"));
+				if(ap_info->phy_11b)
+				{
+					_outputStream->println(F("802.11b"));
+				}
+				if(ap_info->phy_11g)
+				{
+					_outputStream->println(F("802.11b"));
+				}
+				if(ap_info->phy_11n)
+				{
+					_outputStream->println(F("802.11b"));
+				}
+				if(ap_info->phy_lr)
+				{
+					_outputStream->println(F("802.11 lr"));
+				}
 			}
-			if(ap_info->phy_11n)
+			else
 			{
-				_outputStream->println(F("802.11b"));
+				_outputStream->println(F("Unknown"));
 			}
-			if(ap_info->phy_lr)
-			{
-				_outputStream->println(F("802.11 lr"));
-			}
-		}
-		else
-		{
-			_outputStream->println(F("Unknown"));
-		}
-		#endif
+			#endif
 		break;
 		case WL_CONNECT_FAILED:
-		_outputStream->println(F("Connection failed"));
+			_outputStream->println(F("Connection failed"));
 		break;
 		#if defined(ESP8266)
-		case WL_WRONG_PASSWORD:
-		_outputStream->println(F("Wrong PSK"));
-		break;
+			case WL_WRONG_PASSWORD:
+				_outputStream->println(F("Wrong PSK"));
+			break;
 		#elif defined(ESP32)
-		case WL_SCAN_COMPLETED:
-		_outputStream->println(F("Scan completed"));
-		break;
-		case WL_CONNECTION_LOST:
-		_outputStream->println(F("Connection lost"));
-		break;
+			case WL_SCAN_COMPLETED:
+				_outputStream->println(F("Scan completed"));
+			break;
+			case WL_CONNECTION_LOST:
+				_outputStream->println(F("Connection lost"));
+			break;
 		#endif
 		case WL_DISCONNECTED:
-		_outputStream->println(F("Disconnected"));
+			_outputStream->println(F("Disconnected"));
 		break;
 		default:
-		_outputStream->println(F("Unknown"));
+			_outputStream->println(F("Unknown"));
 		break;
 	}
 }
