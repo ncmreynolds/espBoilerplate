@@ -196,6 +196,77 @@ void espBoilerplateClass::printConnectionStatus()
 			_outputStream->println(F("Unknown"));
 		break;
 	}
+	generalInfoPrinted = true;
+}
+
+void espBoilerplateClass::printGeneralInfo()
+{
+	#ifdef ESP_IDF_VERSION_MAJOR
+		_outputStream->print(F("IDF version:"));			
+		#ifdef ESP_IDF_VERSION_MINOR
+			_outputStream->print(ESP_IDF_VERSION_MAJOR);
+			_outputStream->print('.');
+			_outputStream->println(ESP_IDF_VERSION_MINOR);
+		#else
+			_outputStream->println(ESP_IDF_VERSION_MAJOR);
+		#endif
+	#endif
+	_outputStream->print(F("Core:"));
+	#if defined(ESP32)
+		#ifdef ESP_IDF_VERSION_MAJOR // IDF 4+
+			#if CONFIG_IDF_TARGET_ESP32 // ESP32/PICO-D4
+				_outputStream->println(F("ESP32"));
+			#elif CONFIG_IDF_TARGET_ESP32S2
+				_outputStream->println(F("ESP32S2"));
+			#elif CONFIG_IDF_TARGET_ESP32C3
+				_outputStream->println(F("ESP32C3"));
+			#else 
+				#error Target CONFIG_IDF_TARGET is not supported
+			#endif
+		#else // ESP32 Before IDF 4.0
+			_outputStream->println(F("ESP32"));
+		#endif
+	#else
+		_outputStream->println(F("ESP8266"));
+	#endif
+	//_outputStream->print(F("Sketch:"));
+	//_outputStream->println(__FILE__);
+	_outputStream->print(F("Compiled: "));
+	_outputStream->print(__DATE__);
+	_outputStream->print(' ');
+	_outputStream->println(__TIME__);
+	#if defined (ESP8266)
+		_outputStream->print(F("Restart reason:"));
+		_outputStream->println(ESP.getResetReason());
+		_outputStream->print(F("ESP8266 MAC address:"));
+	#elif defined(ESP32)
+		#ifdef ESP_IDF_VERSION_MAJOR // IDF 4+
+			#if CONFIG_IDF_TARGET_ESP32 // ESP32/PICO-D4
+				_outputStream->print(F("Restart reason core 0:"));
+				es32printResetReason(0);
+				_outputStream->print(F("Restart reason core 1:"));
+				es32printResetReason(1);
+				_outputStream->print(F("ESP32 MAC address:"));
+			#elif CONFIG_IDF_TARGET_ESP32S2
+				_outputStream->print(F("Restart reason:"));
+				es32printResetReason(0);
+		_outputStream->print(F("ESP32S2 MAC address:"));
+			#elif CONFIG_IDF_TARGET_ESP32C3
+				_outputStream->print(F("Restart reason:"));
+				es32printResetReason(0);
+				_outputStream->print(F("ESP32C3 MAC address:"));
+			#else 
+				#error Target CONFIG_IDF_TARGET is not supported
+			#endif
+		#else // ESP32 Before IDF 4.0
+			_outputStream->print(F("Restart reason core 0:"));
+			es32printResetReason(0);
+			_outputStream->print(F("Restart reason core 1:"));
+			es32printResetReason(1);
+		_outputStream->print(F("ESP32 MAC address:"));
+		#endif
+	#endif
+	_outputStream->println(WiFi.macAddress());
 }
 
 #ifdef ESP32
