@@ -81,7 +81,11 @@ void espBoilerplateClass::setHostname(char *name)
 
 void espBoilerplateClass::printIpStatus()
 {
-	if((WiFi.getMode() == WIFI_MODE_STA || WiFi.getMode() == WIFI_MODE_APSTA) && WiFi.status() == WL_CONNECTED)
+	#if defined(ESP32)
+		if((WiFi.getMode() == WIFI_MODE_STA || WiFi.getMode() == WIFI_MODE_APSTA) && WiFi.status() == WL_CONNECTED)
+	#elif defined(ESP8266)
+		if((WiFi.getMode() == WIFI_STA || WiFi.getMode() == WIFI_AP_STA) && WiFi.status() == WL_CONNECTED)
+	#endif
 	{
 		_outputStream->println(F("-----------WiFi Client--------------"));
 		_outputStream->print(F("Client IP address:"));
@@ -96,20 +100,29 @@ void espBoilerplateClass::printIpStatus()
 		_outputStream->println(WiFi.dnsIP(1));
 		_outputStream->print(F("Hostname:"));
 		#if defined (ESP8266)
-		_outputStream->println(WiFi.hostname());
+			_outputStream->println(WiFi.hostname());
 		#elif defined (ESP32)
-		_outputStream->println(WiFi.getHostname());
+			_outputStream->println(WiFi.getHostname());
 		#endif
 	}
-	if(WiFi.getMode() == WIFI_MODE_AP || WiFi.getMode() == WIFI_MODE_APSTA)
+	#if defined(ESP32)
+		if(WiFi.getMode() == WIFI_MODE_AP || WiFi.getMode() == WIFI_MODE_APSTA)
+	#elif defined(ESP8266)
+		if(WiFi.getMode() == WIFI_AP || WiFi.getMode() == WIFI_AP_STA)
+	#endif
 	{
 		_outputStream->println(F("-----------WiFi AP--------------"));
 		_outputStream->print(F("AP IP address:"));
 		_outputStream->print(WiFi.softAPIP());
-		_outputStream->print(F(" Subnet mask:"));
-		_outputStream->print(WiFi.softAPNetworkID());
-		_outputStream->print('/');
-		_outputStream->println(WiFi.softAPSubnetCIDR());
+		#if defined(ESP32)
+			_outputStream->print(WiFi.softAPIP());
+			_outputStream->print(F(" Subnet mask:"));
+			_outputStream->print(WiFi.softAPNetworkID());
+			_outputStream->print('/');
+			_outputStream->println(WiFi.softAPSubnetCIDR());
+		#elif defined(ESP8266)
+			_outputStream->println(WiFi.softAPIP());		
+		#endif
 	}
 }
 void espBoilerplateClass::printConnectionStatus()

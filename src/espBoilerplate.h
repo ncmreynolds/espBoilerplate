@@ -33,11 +33,19 @@ class espBoilerplateClass
 			bool connectResult = begin(SSID, PSK, false);
 			if(connectResult)
 			{
-				WiFi.mode(WIFI_MODE_APSTA);
+				#if defined(ESP32)
+					WiFi.mode(WIFI_MODE_APSTA);
+				#elif defined(ESP8266)
+					WiFi.mode(WIFI_AP_STA);
+				#endif
 			}
 			else
 			{
-				WiFi.mode(WIFI_MODE_AP);
+				#if defined(ESP32)
+					WiFi.mode(WIFI_MODE_AP);
+				#elif defined(ESP8266)
+					WiFi.mode(WIFI_AP);
+				#endif
 			}
 			if(_outputStream != nullptr)
 			{
@@ -153,11 +161,19 @@ class espBoilerplateClass
 		{
 			if(WiFi.status() == WL_CONNECTED)
 			{
-				WiFi.mode(WIFI_MODE_APSTA);
+				#if defined(ESP32)
+					WiFi.mode(WIFI_MODE_APSTA);
+				#elif defined(ESP8266)
+					WiFi.mode(WIFI_AP_STA);
+				#endif
 			}
 			else
 			{
-				WiFi.mode(WIFI_MODE_AP);
+				#if defined(ESP32)
+					WiFi.mode(WIFI_MODE_AP);
+				#elif defined(ESP8266)
+					WiFi.mode(WIFI_AP);
+				#endif
 			}
 			if(generalInfoPrinted == false && _outputStream != nullptr)
 			{
