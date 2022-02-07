@@ -91,7 +91,7 @@ class espBoilerplateClass
 				_outputStream->print(SSID);
 				_outputStream->print(F("\" PSK:\""));
 				_outputStream->print(WiFi.psk());
-				_outputStream->print("\"\nTimeout:");
+				_outputStream->print("\"\r\nTimeout:");
 				_outputStream->print((connectionRetries*connectionRetryFrequency)/1000);
 				_outputStream->print(F("s "));
 			}
