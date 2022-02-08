@@ -47,15 +47,7 @@ class espBoilerplateClass
 					WiFi.mode(WIFI_AP);
 				#endif
 			}
-			if(_outputStream != nullptr)
-			{
-				_outputStream->print(F("Creating SoftAP SSID:\""));
-				_outputStream->print(APSSID);
-				_outputStream->print(F("\" PSK:\""));
-				_outputStream->print(APPSK);
-				_outputStream->println('"');
-			}
-			WiFi.softAP(APSSID, APPSK);
+			beginAp(APSSID,APPSK, false);
 			if(_outputStream != nullptr)
 			{
 				printIpStatus();
@@ -157,7 +149,7 @@ class espBoilerplateClass
 			}
 		}
 		template <class argumentC, class argumentD>
-		bool beginAp(argumentC APSSID, argumentD APPSK)	//Default way to start Wi-Fi connection
+		bool beginAp(argumentC APSSID, argumentD APPSK, bool displayIpStatus = true)	//Default way to start Wi-Fi connection
 		{
 			if(WiFi.status() == WL_CONNECTED)
 			{
@@ -179,6 +171,18 @@ class espBoilerplateClass
 			{
 				printGeneralInfo();
 			}
+			if(derivedApSubnet == true)
+			{
+				#if defined(ESP8266)
+				uint8_t macAddr[6];
+				WiFi.softAPmacAddress(macAddr);
+				IPAddress softApIp(10,macAddr[4],macAddr[5],1);
+				IPAddress softApGateway(10,macAddr[4],macAddr[5],1);
+				IPAddress softApSubnet(255,255,255,0);
+				WiFi.softAPConfig (softApIp, softApGateway, softApSubnet);
+				#elif defined(ESP32)
+				#endif
+			}
 			if(_outputStream != nullptr)
 			{
 				_outputStream->print(F("Creating SoftAP SSID:\""));
@@ -186,9 +190,13 @@ class espBoilerplateClass
 				_outputStream->print(F("\" PSK:\""));
 				_outputStream->print(APPSK);
 				_outputStream->println('"');
+				if(derivedApSubnet == true)
+				{
+					_outputStream->println(F("Enabled derived AP subnet"));
+				}
 			}
 			WiFi.softAP(APSSID, APPSK);
-			if(_outputStream != nullptr)
+			if(_outputStream != nullptr && displayIpStatus == true)
 			{
 				printIpStatus();
 			}
@@ -198,6 +206,7 @@ class espBoilerplateClass
 		void setRetries(uint8_t);					//Change how many retries before a connections attemp fails
 		void setHostname(char *);					//Set the hostname, chooses the right function for ESP8266/ESP32
 		void setHostname(String name);				//String version of above
+		void enableDerivedApSubnet();				//Enable use of AP subnet based off MAC address, instead of 192.168.4.0/24
 	protected:
 	private:
 		Stream *_outputStream = nullptr;			//The stream used for the terminal
@@ -211,6 +220,7 @@ class espBoilerplateClass
 		#endif
 		char* hostname = nullptr;					//Store hostname for setting once WiFi is started
 		bool generalInfoPrinted = false;
+		bool derivedApSubnet = false;
 };
 extern espBoilerplateClass espBoilerplate;
 #endif

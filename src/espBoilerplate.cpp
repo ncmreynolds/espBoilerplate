@@ -113,7 +113,6 @@ void espBoilerplateClass::printIpStatus()
 	{
 		_outputStream->println(F("-----------WiFi AP--------------"));
 		_outputStream->print(F("AP IP address:"));
-		_outputStream->print(WiFi.softAPIP());
 		#if defined(ESP32)
 			_outputStream->print(WiFi.softAPIP());
 			_outputStream->print(F(" Subnet mask:"));
@@ -306,5 +305,10 @@ void espBoilerplateClass::es32printResetReason(uint8_t core)
 	}
 }
 #endif
+
+void espBoilerplateClass::enableDerivedApSubnet()
+{
+	derivedApSubnet = true;
+}
 espBoilerplateClass espBoilerplate;
 #endif

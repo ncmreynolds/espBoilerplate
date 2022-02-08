@@ -70,12 +70,16 @@ If you omit "setOutputStream" there will be no output on a Stream.
 There are only a handful of methods to this library, it's supposed to be simple.
 
 ```c++
-bool setOutputStream(Stream &);				//Set the Stream used for debug output, if any
+bool espBoilerplate.setOutputStream(Stream &);	//Set the Stream used for debug output, if any
 ```
 
 ```c++
-void setHostname(char *);					//Set the hostname, chooses the right functions for ESP8266/ESP32
-void setHostname(String name);				//String version of above
+void espBoilerplate.setHostname(char *);	//Set the hostname, chooses the right functions for ESP8266/ESP32
+void espBoilerplate.setHostname(String name);	//String version of above
+```
+
+```c++
+void espBoilerplate.enableDerivedApSubnet();	//Derives the SoftAp subnet from the MAC address so it is not always 192.168.4.0/24
 ```
 
 ```c++
@@ -83,7 +87,7 @@ bool espBoilerplate.begin(WIFI_SSID,WIFI_PSK);	//Does what it says on the tin, c
 ```
 
 ```c++
-bool espBoilerplate.begin(WIFI_SSID,WIFI_PSK,AP_SSID,AP_PSK);//Similar to the above but starts a SoftAp as well
+bool espBoilerplate.begin(WIFI_SSID,WIFI_PSK,AP_SSID,AP_PSK);	//Similar to the above but starts a SoftAp as well
 ```
 
 ```c++
@@ -91,6 +95,6 @@ bool espBoilerplate.setOutputStream(Serial1);	//Optionally, send the output to a
 ```
 
 ```c++
-void setRetries(60);							//Set how many 1s retries before giving up on making a connection
+void espBoilerplate.setRetries(60);	//Set how many 1s retries before giving up on making a connection
 ```
 
