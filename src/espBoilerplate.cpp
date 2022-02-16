@@ -238,8 +238,14 @@ void espBoilerplateClass::printGeneralInfo()
 		#else // ESP32 Before IDF 4.0
 			_outputStream->println(F("ESP32"));
 		#endif
-	#else
+	#elif defined(ESP8266)
 		_outputStream->println(F("ESP8266"));
+	#else
+		_outputStream->println(F("Uknown"));
+	#endif
+	#ifdef ARDUINO_BOARD
+		_outputStream->print(F("Board:"));
+		_outputStream->println(ARDUINO_BOARD);
 	#endif
 	//_outputStream->print(F("Sketch:"));
 	//_outputStream->println(__FILE__);
