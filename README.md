@@ -65,6 +65,10 @@ It's probably most useful when starting out creating a sketch and can be ditched
 
 If you omit "setOutputStream" there will be no output on a Stream.
 
+As of version 0.1.2 this library can automatically configure NTP (default server 'pool.ntp.org') using the https://ipapi.co/ geolocation API and set the internal clock correctly. This requires the device be internet connected to retrieve the time. You can also specify a time server and time zone, which must be in IANA format, see [this list](https://raw.githubusercontent.com/nayarsystems/posix_tz_db/master/zones.csv).
+
+You should see the [Espressif example](https://github.com/espressif/arduino-esp32/tree/master/libraries/ESP32/examples/Time) for how to manipulate/retrieve system time.
+
 ## Usage
 
 There are only a handful of methods to this library, it's supposed to be simple.
@@ -98,3 +102,10 @@ bool espBoilerplate.setOutputStream(Serial1);	//Optionally, send the output to a
 void espBoilerplate.setRetries(60);	//Set how many 1s retries before giving up on making a connection
 ```
 
+```cpp
+void configureNtp(bool autoconfigure = true);				//Enable NTP using the default server 'pool.ntp.org', autoconfiguring TZ
+void configureNtp(const char *, bool autoconfigure = true);//Set an NTP server and enable NTP
+void configureNtp(String, bool autoconfigure = true);		//Set an NTP server and enable NTP
+void configureTimeZone(const char *);						//Set a timezone for the NTP server, if not autoconfiguring
+void configureTimeZone(String);						//Set a timezone for the NTP server, if not autoconfiguring
+```
