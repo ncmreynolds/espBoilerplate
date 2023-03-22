@@ -17,9 +17,14 @@
 	#else // ESP32 Before IDF 4.0
 		#include "rom/rtc.h"
 	#endif
+	#include <HTTPClient.h>
+	#include <WiFi.h>
 #else
 	#include <ESP8266WiFi.h>
+	#include <ESP8266HTTPClient.h>
+	#include <WiFiClientSecureBearSSL.h>
 #endif
+#include <time.h>
 
 class espBoilerplateClass
 {
@@ -137,6 +142,10 @@ class espBoilerplateClass
 						printIpStatus();
 					}
 				}
+				if(_ntpEnabled)
+				{
+					_enableNtp();
+				}
 				return(true);
 			}
 			else
@@ -207,6 +216,11 @@ class espBoilerplateClass
 		void setHostname(char *);					//Set the hostname, chooses the right function for ESP8266/ESP32
 		void setHostname(String name);				//String version of above
 		void enableDerivedApSubnet();				//Enable use of AP subnet based off MAC address, instead of 192.168.4.0/24
+		void configureNtp(bool autoconfigure = true);				//Enable NTP using the default server 'pool.ntp.org', autoconfiguring TZ
+		void configureNtp(const char *, bool autoconfigure = true);//Set an NTP server and enable NTP
+		void configureNtp(String, bool autoconfigure = true);		//Set an NTP server and enable NTP
+		void configureTimeZone(const char *);						//Set a timezone for the NTP server, if not autoconfiguring
+		void configureTimeZone(String);						//Set a timezone for the NTP server, if not autoconfiguring
 	protected:
 	private:
 		Stream *_outputStream = nullptr;			//The stream used for the terminal
@@ -215,12 +229,19 @@ class espBoilerplateClass
 		void printConnectionStatus();				//Print client status
 		void printIpStatus();						//Print IP status
 		void printGeneralInfo();					//Detail about IDF version etc.
+		void _enableNtp();							//Enable NTP internally
+		bool _getTimeOffset();						//Geolocate to set UTC offset
+		uint16_t _timeOffset = 0;					//UTC offset in seconds
 		#ifdef ESP32
 		void es32printResetReason(uint8_t);			//Reset reason on ESP32 which lacks the function available in ESP8266
 		#endif
 		char* hostname = nullptr;					//Store hostname for setting once WiFi is started
 		bool generalInfoPrinted = false;
 		bool derivedApSubnet = false;
+		char* _ntpServer = nullptr;
+		bool _ntpEnabled = false;
+		bool _ntpAutoconfigure = true;
+		char* _timezone = nullptr;
 };
 extern espBoilerplateClass espBoilerplate;
 #endif

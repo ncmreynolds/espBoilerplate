@@ -289,6 +289,132 @@ void espBoilerplateClass::printGeneralInfo()
 	_outputStream->println(WiFi.macAddress());
 }
 
+void espBoilerplateClass::configureNtp(bool autoconfigure)
+{
+	configureNtp("pool.ntp.org", autoconfigure);
+}
+void espBoilerplateClass::configureNtp(const char * ntpserver, bool autoconfigure)
+{
+	_ntpEnabled = true;
+	if(_timezone == nullptr)
+	{
+		_ntpAutoconfigure = autoconfigure;
+	}
+	if(_ntpServer != nullptr)
+	{
+		if(WiFi.status() == WL_CONNECTED)
+		{
+			_enableNtp();
+		}
+	}
+	else
+	{
+		_ntpServer = new char[strlen(ntpserver) + 1];
+		strlcpy(_ntpServer, ntpserver, strlen(ntpserver) + 1);
+		if(WiFi.status() == WL_CONNECTED)
+		{
+			_enableNtp();
+		}
+	}
+}
+void espBoilerplateClass::_enableNtp()
+{
+	if(_outputStream != nullptr)
+	{
+		_outputStream->print(F("Enabling NTP server: "));
+		_outputStream->println(_ntpServer);
+		if(_timezone != nullptr)
+		{
+			_outputStream->print(F("Timezone: "));
+			_outputStream->println(_timezone);
+		}
+			
+	}
+	if(_ntpAutoconfigure)
+	{
+		_outputStream->print(F("Autoconfigured TZ offset: "));
+		if(_getTimeOffset())
+		{
+			configTime(_timeOffset, 0, _ntpServer);
+			if(_outputStream != nullptr)
+			{
+				_outputStream->println(_timeOffset);
+			}
+		}
+		else
+		{
+			_outputStream->println(F("autoconfigure failed, using UTC"));
+			configTime(0, 0, _ntpServer);
+		}
+	}
+	else
+	{
+		configTime(0, 0, _ntpServer);
+	}
+}
+void espBoilerplateClass::configureNtp(String ntpserver, bool autoconfigure)
+{
+	configureNtp(ntpserver.c_str(), autoconfigure);
+}
+void espBoilerplateClass::configureTimeZone(const char *tz)
+{
+	_timezone = new char[strlen(tz) + 1];
+	strlcpy(_timezone, tz, strlen(tz) + 1);
+	setenv("TZ",_timezone,1);
+	tzset();
+	_ntpAutoconfigure = false;
+}
+void espBoilerplateClass::configureTimeZone(String tz)
+{
+	configureTimeZone(tz.c_str());
+}
+
+// Inspired https://github.com/bitbank2/rtc_setter/ but heavily refactored to do in one step
+//
+// This function uses the ipapi.co website to convert
+// the device's public IP address into a time zone offset (HHMM)
+// It returns the offset in seconds from UTC
+//
+bool espBoilerplateClass::_getTimeOffset()
+{
+	HTTPClient http;
+	int16_t httpCode = -1;
+	char offsetQuery[] = "https://ipapi.co/utc_offset/";
+	#ifdef ESP8266
+		std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
+		client->setInsecure();
+		http.begin(*client, offsetQuery);
+	#else
+		http.begin(offsetQuery);
+	#endif
+	httpCode = http.GET();  //send GET request
+	if(httpCode != 200)
+	{
+		http.end();
+		return -1;
+	}
+	else
+	{
+		const char *s;
+		_timeOffset = 0;
+		String payload = http.getString();
+		http.end();
+		s = payload.c_str();
+		// Get the raw HTTP response text (+HHMM)
+		// and convert the time zone offset (HHMM) into seconds
+		_timeOffset = ((s[1]-'0') * 10) + (s[2]-'0'); // hour
+		_timeOffset *= 60;
+		_timeOffset += ((s[3]-'0') * 10) + (s[4]-'0'); // minute
+		if (s[0] == '-')
+		{
+			_timeOffset = -_timeOffset; // negative offset
+		}
+		_timeOffset = _timeOffset * 60;
+		return true;
+	}
+	return false;
+}
+
 #ifdef ESP32
 void espBoilerplateClass::es32printResetReason(uint8_t core)
 {
