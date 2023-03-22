@@ -5,8 +5,8 @@
 
 # Methods and Functions (KEYWORD2)
 begin	KEYWORD2
-enableNtp	KEYWORD2
-setTimeZone	KEYWORD2
+configureNtp	KEYWORD2
+configureTimeZone	KEYWORD2
 setOutputStream	KEYWORD2
 setRetries	KEYWORD2
 
