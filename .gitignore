@@ -32,3 +32,4 @@
 *.app
 
 credentials.h
+.development
