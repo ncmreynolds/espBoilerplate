@@ -238,6 +238,12 @@ void espBoilerplateClass::printGeneralInfo()
 		#else // ESP32 Before IDF 4.0
 			_outputStream->println(F("ESP32"));
 		#endif
+		if(psramFound())
+		{
+			_outputStream->print(F("PSRAM: "));
+			_outputStream->print(ESP.getFreePsram()/1024);
+			_outputStream->println(F("KB"));
+		}
 	#elif defined(ARDUINO_ESP8266_ESP01)
 		_outputStream->println(F("ESP8285"));	//Not a perfect marker, but it SHOULD be right
 	#elif defined(ESP8266)
