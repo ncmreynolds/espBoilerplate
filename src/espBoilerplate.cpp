@@ -238,6 +238,8 @@ void espBoilerplateClass::printGeneralInfo()
 		#else // ESP32 Before IDF 4.0
 			_outputStream->println(F("ESP32"));
 		#endif
+	#elif defined(ARDUINO_ESP8266_ESP01)
+		_outputStream->println(F("ESP8285"));	//Not a perfect marker, but it SHOULD be right
 	#elif defined(ESP8266)
 		_outputStream->println(F("ESP8266"));
 	#else
