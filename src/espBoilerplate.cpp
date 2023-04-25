@@ -23,7 +23,7 @@ bool espBoilerplateClass::setOutputStream(Stream &streamToUse)
 		return(false);
 	}
 }
-void espBoilerplateClass::setRetries(uint8_t retries)
+void espBoilerplateClass::setRetries(uint16_t retries)
 {
 	connectionRetries = retries;
 }
@@ -235,6 +235,9 @@ void espBoilerplateClass::printGeneralInfo()
 			#else 
 				#error Target CONFIG_IDF_TARGET is not supported
 			#endif
+			_outputStream->print(F("CPU speed: "));
+			_outputStream->print(getCpuFrequencyMhz());
+			_outputStream->print(F("Mhz"));
 		#else // ESP32 Before IDF 4.0
 			_outputStream->println(F("ESP32"));
 		#endif
@@ -293,6 +296,12 @@ void espBoilerplateClass::printGeneralInfo()
 		#endif
 	#endif
 	_outputStream->println(WiFi.macAddress());
+	_outputStream->print(F("Unique ChipID: "));
+	#if defined (ESP8266)
+		_outputStream->println(ESP.getChipId(), HEX);
+	#elif defined(ESP32)
+		_outputStream->println(ESP.getEfuseMac(), HEX);
+	#endif
 }
 
 void espBoilerplateClass::configureNtp(bool autoconfigure)
@@ -338,7 +347,10 @@ void espBoilerplateClass::_enableNtp()
 	}
 	if(_ntpAutoconfigure)
 	{
-		_outputStream->print(F("Autoconfigured TZ offset: "));
+		if(_outputStream != nullptr)
+		{
+			_outputStream->print(F("Autoconfigured TZ offset: "));
+		}
 		if(_getTimeOffset())
 		{
 			configTime(_timeOffset, 0, _ntpServer);
@@ -349,7 +361,10 @@ void espBoilerplateClass::_enableNtp()
 		}
 		else
 		{
-			_outputStream->println(F("autoconfigure failed, using UTC"));
+			if(_outputStream != nullptr)
+			{
+				_outputStream->println(F("autoconfigure failed, using UTC"));
+			}
 			configTime(0, 0, _ntpServer);
 		}
 	}
