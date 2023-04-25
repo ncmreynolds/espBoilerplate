@@ -88,7 +88,7 @@ class espBoilerplateClass
 				_outputStream->print(SSID);
 				_outputStream->print(F("\" PSK:\""));
 				_outputStream->print(WiFi.psk());
-				_outputStream->print("\"\r\nTimeout:");
+				_outputStream->print("\" timeout:");
 				_outputStream->print((connectionRetries*connectionRetryFrequency)/1000);
 				_outputStream->print(F("s "));
 			}
@@ -212,7 +212,7 @@ class espBoilerplateClass
 			return(true);
 		}
 		bool setOutputStream(Stream &);				//Change the Stream used for output
-		void setRetries(uint8_t);					//Change how many retries before a connections attemp fails
+		void setRetries(uint16_t);					//Change how many retries before a connections attemp fails
 		void setHostname(char *);					//Set the hostname, chooses the right function for ESP8266/ESP32
 		void setHostname(String name);				//String version of above
 		void enableDerivedApSubnet();				//Enable use of AP subnet based off MAC address, instead of 192.168.4.0/24
@@ -224,7 +224,7 @@ class espBoilerplateClass
 	protected:
 	private:
 		Stream *_outputStream = nullptr;			//The stream used for the terminal
-		uint8_t connectionRetries = 30;				//How many times a connection retries
+		uint16_t connectionRetries = 30;			//How many times a connection retries
 		uint16_t connectionRetryFrequency = 1000;	//Interval between retries in ms
 		void printConnectionStatus();				//Print client status
 		void printIpStatus();						//Print IP status
