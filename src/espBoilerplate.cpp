@@ -122,6 +122,16 @@ void espBoilerplateClass::printIpStatus()
 		#elif defined(ESP8266)
 			_outputStream->println(WiFi.softAPIP());		
 		#endif
+		#ifdef ESP32
+			#ifdef ESP_IDF_VERSION_MAJOR // IDF 4+
+				#if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3
+					if(ftm == true)
+					{
+						_outputStream->println(F("FTM: enabled"));
+					}
+				#endif
+			#endif
+		#endif
 	}
 	_outputStream->println(F("--------------------------------"));
 }
@@ -474,5 +484,22 @@ void espBoilerplateClass::enableDerivedApSubnet()
 {
 	derivedApSubnet = true;
 }
+
+bool espBoilerplateClass::enableFtm()
+{
+	#if defined(ESP32)
+		#ifdef ESP_IDF_VERSION_MAJOR // IDF 4+
+			#if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3
+				ftm = true;
+			#else 
+				ftm = false;	//FTM unsupported
+			#endif
+		#else // ESP32 Before IDF 4.0
+			ftm = false;	//FTM unsupported
+		#endif
+	#endif
+	return ftm;
+}
+
 espBoilerplateClass espBoilerplate;
 #endif

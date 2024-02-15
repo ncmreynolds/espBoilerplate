@@ -11,6 +11,7 @@ configureTimeZone	KEYWORD2
 setOutputStream	KEYWORD2
 setRetries	KEYWORD2
 enableDerivedApSubnet	KEYWORD2
+enableFtm	KEYWORD2
 
 # Instances (KEYWORD2)
 

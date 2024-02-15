@@ -216,13 +216,25 @@ class espBoilerplateClass
 					_outputStream->println(F("Enabled derived AP subnet"));
 				}
 			}
+			/*
 			if(softApChannel != 0)
 			{
 				WiFi.softAP(APSSID, APPSK);
 			}
 			else
+			*/
 			{
-				WiFi.softAP(APSSID, APPSK, softApChannel);
+				#if defined(ESP32)
+					#ifdef ESP_IDF_VERSION_MAJOR // IDF 4+
+						#if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3
+							WiFi.softAP(APSSID, APPSK, softApChannel, softApHidden, softApMaxConnections, ftm);
+						#else 
+							WiFi.softAP(APSSID, APPSK, softApChannel, softApHidden, softApMaxConnections);
+						#endif
+					#else // ESP32 Before IDF 4.0
+						WiFi.softAP(APSSID, APPSK, softApChannel, softApHidden, softApMaxConnections);
+					#endif
+				#endif
 			}
 			if(_outputStream != nullptr && displayIpStatus == true)
 			{
@@ -235,6 +247,7 @@ class espBoilerplateClass
 		void setHostname(char *);					//Set the hostname, chooses the right function for ESP8266/ESP32
 		void setHostname(String name);				//String version of above
 		void enableDerivedApSubnet();				//Enable use of AP subnet based off MAC address, instead of 192.168.4.0/24
+		bool enableFtm();							//Enable use of FTM time-of-flight measurements IF the device (S2/C3/S3) supports it and an AP is enabled!
 		void configureNtp(bool autoconfigure = true);				//Enable NTP using the default server 'pool.ntp.org', autoconfiguring TZ
 		void configureNtp(const char *, bool autoconfigure = true);//Set an NTP server and enable NTP
 		void configureNtp(String, bool autoconfigure = true);		//Set an NTP server and enable NTP
@@ -257,6 +270,9 @@ class espBoilerplateClass
 		#endif
 		char* hostname = nullptr;					//Store hostname for setting once WiFi is started
 		bool generalInfoPrinted = false;
+		bool ftm = false;
+		int softApHidden = 0;
+		int softApMaxConnections = 4;
 		bool derivedApSubnet = false;
 		char* _ntpServer = nullptr;
 		bool _ntpEnabled = false;
