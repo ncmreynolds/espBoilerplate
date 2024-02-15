@@ -93,10 +93,11 @@ class espBoilerplateClass
 				_outputStream->print(F("s "));
 			}
 			uint8_t retries = connectionRetries;
+			uint8_t errorCount = 0;
 			#if defined(ESP8266)
 			while((WiFi.status() == WL_DISCONNECTED || WiFi.status() == WL_IDLE_STATUS) && retries > 0)
 			#elif defined(ESP32)
-			while((WiFi.status() == WL_DISCONNECTED || WiFi.status() == WL_IDLE_STATUS || WiFi.status() == WL_CONNECT_FAILED) && retries > 0)
+			while((WiFi.status() == WL_DISCONNECTED || WiFi.status() == WL_IDLE_STATUS || WiFi.status() == WL_CONNECT_FAILED) && retries > 0 && errorCount < 3)
 			#endif
 			{
 				retries--;
@@ -105,9 +106,11 @@ class espBoilerplateClass
 					switch (WiFi.status()) {
 						case WL_IDLE_STATUS:
 							_outputStream->print('I');
+							errorCount++;
 						break;
 						case WL_NO_SSID_AVAIL:
 							_outputStream->print('U');
+							errorCount++;
 						break;
 						case WL_SCAN_COMPLETED:
 							_outputStream->print('S');
@@ -123,6 +126,7 @@ class espBoilerplateClass
 						break;
 						default:
 							_outputStream->print('?');
+							errorCount++;
 						break;
 					}
 				}
@@ -198,13 +202,28 @@ class espBoilerplateClass
 				_outputStream->print(APSSID);
 				_outputStream->print(F("\" PSK:\""));
 				_outputStream->print(APPSK);
-				_outputStream->println('"');
+				if(softApChannel != 0)
+				{
+					_outputStream->print("\" channel: ");
+					_outputStream->println(softApChannel);
+				}
+				else
+				{
+					_outputStream->println('"');
+				}
 				if(derivedApSubnet == true)
 				{
 					_outputStream->println(F("Enabled derived AP subnet"));
 				}
 			}
-			WiFi.softAP(APSSID, APPSK);
+			if(softApChannel != 0)
+			{
+				WiFi.softAP(APSSID, APPSK);
+			}
+			else
+			{
+				WiFi.softAP(APSSID, APPSK, softApChannel);
+			}
 			if(_outputStream != nullptr && displayIpStatus == true)
 			{
 				printIpStatus();
@@ -220,7 +239,8 @@ class espBoilerplateClass
 		void configureNtp(const char *, bool autoconfigure = true);//Set an NTP server and enable NTP
 		void configureNtp(String, bool autoconfigure = true);		//Set an NTP server and enable NTP
 		void configureTimeZone(const char *);						//Set a timezone for the NTP server, if not autoconfiguring
-		void configureTimeZone(String);						//Set a timezone for the NTP server, if not autoconfiguring
+		void configureTimeZone(String);				//Set a timezone for the NTP server, if not autoconfiguring
+		void setApChannel(uint8_t channel = 0);		//Set a channel for the softAp, 0 implies automatic (least congested)
 	protected:
 	private:
 		Stream *_outputStream = nullptr;			//The stream used for the terminal
@@ -242,6 +262,7 @@ class espBoilerplateClass
 		bool _ntpEnabled = false;
 		bool _ntpAutoconfigure = true;
 		char* _timezone = nullptr;
+		uint8_t softApChannel = 0;
 };
 extern espBoilerplateClass espBoilerplate;
 #endif

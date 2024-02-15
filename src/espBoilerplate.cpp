@@ -71,7 +71,7 @@ void espBoilerplateClass::setHostname(char *name)
 		}
 		hostname = new char[length + 1];
 		strncpy(hostname, name, length);
-		hostname[length  + 1] = char(0);
+		hostname[length] = char(0);
 		if(_outputStream != nullptr)
 		{
 			_outputStream->println(hostname);
@@ -123,12 +123,14 @@ void espBoilerplateClass::printIpStatus()
 			_outputStream->println(WiFi.softAPIP());		
 		#endif
 	}
+	_outputStream->println(F("--------------------------------"));
 }
 void espBoilerplateClass::printConnectionStatus()
 {
 	switch (WiFi.status()) {
+		_outputStream->print(F("Station: "));
 		case WL_IDLE_STATUS:
-			_outputStream->println(F("Idle"));
+			_outputStream->println(F("Station: idle"));
 		break;
 		case WL_NO_SSID_AVAIL:
 			_outputStream->println(F("SSID unavailable"));
@@ -187,25 +189,25 @@ void espBoilerplateClass::printConnectionStatus()
 			#endif
 		break;
 		case WL_CONNECT_FAILED:
-			_outputStream->println(F("Connection failed"));
+			_outputStream->println(F("connection failed"));
 		break;
 		#if defined(ESP8266)
 			case WL_WRONG_PASSWORD:
-				_outputStream->println(F("Wrong PSK"));
+				_outputStream->println(F("wrong PSK"));
 			break;
 		#elif defined(ESP32)
 			case WL_SCAN_COMPLETED:
-				_outputStream->println(F("Scan completed"));
+				_outputStream->println(F("scan completed"));
 			break;
 			case WL_CONNECTION_LOST:
-				_outputStream->println(F("Connection lost"));
+				_outputStream->println(F("connection lost"));
 			break;
 		#endif
 		case WL_DISCONNECTED:
-			_outputStream->println(F("Disconnected"));
+			_outputStream->println(F("disconnected"));
 		break;
 		default:
-			_outputStream->println(F("Unknown"));
+			_outputStream->println(F("unknown"));
 		break;
 	}
 	generalInfoPrinted = true;
@@ -226,18 +228,20 @@ void espBoilerplateClass::printGeneralInfo()
 	_outputStream->print(F("Core:"));
 	#if defined(ESP32)
 		#ifdef ESP_IDF_VERSION_MAJOR // IDF 4+
-			#if CONFIG_IDF_TARGET_ESP32 // ESP32/PICO-D4
-				_outputStream->println(F("ESP32"));
+			#if CONFIG_IDF_TARGET_ESP32S1
+				_outputStream->println(F("ESP32S1"));
 			#elif CONFIG_IDF_TARGET_ESP32S2
 				_outputStream->println(F("ESP32S2"));
 			#elif CONFIG_IDF_TARGET_ESP32C3
 				_outputStream->println(F("ESP32C3"));
+			#elif CONFIG_IDF_TARGET_ESP32 // ESP32/PICO-D4
+				_outputStream->println(F("ESP32"));
 			#else 
 				#error Target CONFIG_IDF_TARGET is not supported
 			#endif
 			_outputStream->print(F("CPU speed: "));
 			_outputStream->print(getCpuFrequencyMhz());
-			_outputStream->print(F("Mhz"));
+			_outputStream->println(F("Mhz"));
 		#else // ESP32 Before IDF 4.0
 			_outputStream->println(F("ESP32"));
 		#endif
@@ -434,6 +438,11 @@ bool espBoilerplateClass::_getTimeOffset()
 		return true;
 	}
 	return false;
+}
+
+void espBoilerplateClass::setApChannel(uint8_t channel)
+{
+	softApChannel = channel;
 }
 
 #ifdef ESP32

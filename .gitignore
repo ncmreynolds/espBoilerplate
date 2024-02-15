@@ -33,3 +33,6 @@
 
 credentials.h
 .development
+examples/automaticTimeServer/debug.cfg
+examples/automaticTimeServer/debug_custom.json
+examples/automaticTimeServer/esp32c3.svd

@@ -5,10 +5,12 @@
 
 # Methods and Functions (KEYWORD2)
 begin	KEYWORD2
+beginAp	KEYWORD2
 configureNtp	KEYWORD2
 configureTimeZone	KEYWORD2
 setOutputStream	KEYWORD2
 setRetries	KEYWORD2
+enableDerivedApSubnet	KEYWORD2
 
 # Instances (KEYWORD2)
 
