@@ -242,6 +242,8 @@ void espBoilerplateClass::printGeneralInfo()
 				_outputStream->println(F("ESP32S1"));
 			#elif CONFIG_IDF_TARGET_ESP32S2
 				_outputStream->println(F("ESP32S2"));
+			#elif CONFIG_IDF_TARGET_ESP32S3
+				_outputStream->println(F("ESP32S3"));
 			#elif CONFIG_IDF_TARGET_ESP32C3
 				_outputStream->println(F("ESP32C3"));
 			#elif CONFIG_IDF_TARGET_ESP32 // ESP32/PICO-D4
@@ -293,7 +295,13 @@ void espBoilerplateClass::printGeneralInfo()
 			#elif CONFIG_IDF_TARGET_ESP32S2
 				_outputStream->print(F("Restart reason:"));
 				es32printResetReason(0);
-		_outputStream->print(F("ESP32S2 MAC address:"));
+				_outputStream->print(F("ESP32S2 MAC address:"));
+			#elif CONFIG_IDF_TARGET_ESP32S3
+				_outputStream->print(F("Restart reason core 0:"));
+				es32printResetReason(0);
+				_outputStream->print(F("Restart reason core 1:"));
+				es32printResetReason(1);
+				_outputStream->print(F("ESP32S3 MAC address:"));
 			#elif CONFIG_IDF_TARGET_ESP32C3
 				_outputStream->print(F("Restart reason:"));
 				es32printResetReason(0);
