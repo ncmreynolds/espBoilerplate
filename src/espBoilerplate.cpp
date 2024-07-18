@@ -137,10 +137,10 @@ void espBoilerplateClass::printIpStatus()
 }
 void espBoilerplateClass::printConnectionStatus()
 {
+	_outputStream->print(F("Station: "));
 	switch (WiFi.status()) {
-		_outputStream->print(F("Station: "));
 		case WL_IDLE_STATUS:
-			_outputStream->println(F("Station: idle"));
+			_outputStream->println(F("idle"));
 		break;
 		case WL_NO_SSID_AVAIL:
 			_outputStream->println(F("SSID unavailable"));
